@@ -15,9 +15,6 @@
     ansible_password: "{{ password_from_hoster }}"
     control_user: admin
   roles:
-
-
-
 #      - { role: первичная роль, ansible_password: ansible_facts.root_password}
 #      #- { role: ssh-keys, user_status: 'present', user_pub_key: 'home.pub', ssh_user: '{{ ansible_user }}'}
       - { role: admin-user, ssh_user: '{{ control_user }}'}
