@@ -1,0 +1,72 @@
+---
+- name: Converge
+  hosts: all
+  remote_user: root
+  #  become: yes
+
+  tasks:
+#    - name: create openvpn server
+#      #      when: inventory_hostname in groups['server']
+#      ansible.builtin.include_role:
+#        name: robertdebock.openvpn
+#      vars:
+#        openvpn_role: "server"
+
+
+
+
+
+    - name: ansible copy file from remote( openvpn server) to local.(ansible runner)
+      #      when: inventory_hostname in groups['server']
+      remote_user: root
+      fetch:
+        src: /etc/openvpn/easy-rsa/pki/{{ item }}
+        dest: /etc/openvpn/client/
+        flat: yes
+      loop:
+        - ca.crt
+        - issued/client.crt
+        - private/client.key
+        - ta.key
+
+ ####
+ ## COPY копирует с локальной системы, где запускается плейбук на удаленную систему
+ ####
+
+
+
+          #    - name copy certificates and keys from ansible runner to the client
+          #      when: inventory_hostname in groups['clients']
+          #      ansible.builtin.copy:
+          #        src: /etc/openvpn/client/{{ item }}
+          #        dest: /etc/openvpn/client/{{ item | basename }}
+          #        mode: "0640"
+          #        #        remote_src: yes
+          #      loop:
+          #        - ca.crt
+          #        - client.crt
+          #        - client.key
+          #        - ta.key
+
+
+#    - name: copy certificates and keys from the server to the client
+#      when: inventory_hostname in groups['clients']
+#      ansible.builtin.copy:
+#        src: /etc/openvpn/easy-rsa/pki/{{ item }}
+#        dest: /etc/openvpn/client/{{ item | basename }}
+#        mode: "0640"
+#        remote_src: yes
+#      loop:
+#        - ca.crt
+#        - issued/client.crt
+#        - private/client.key
+#        - ta.key
+
+          #    - name: create openvpn client
+          #      when: inventory_hostname in groups['clients']
+          #      ansible.builtin.include_role:
+          #        name: robertdebock.openvpn
+          #      vars:
+          #        openvpn_role: "client"
+          #        # openvpn_client_server: "34.82.2.161"
+          #        openvpn_client_server: "45.142.215.242"

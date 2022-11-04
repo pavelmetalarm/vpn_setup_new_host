@@ -1,0 +1,9 @@
+---
+- hosts: all
+  roles:
+          #       - { role: ssh-keys, user_status: 'present', user_pub_key: 'home.pub', ssh_user: '{{ ansible_user }}', tags: my1 }
+          #       - { role: ssh-keys, user_status: 'present', user_pub_key: 'ansible_runner.pub', ssh_user: '{{ ansible_user }}', tags: my1 }
+
+
+       - { role: ssh-keys, user_status: 'present', user_pub_key: 'home.pub', ssh_user: 'admin', tags: my1 }
+       - { role: ssh-keys, user_status: 'present', user_pub_key: 'ansible_runner.pub', ssh_user: 'admin', tags: my1 }

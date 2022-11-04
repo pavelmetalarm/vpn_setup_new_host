@@ -1,0 +1,12 @@
+---
+- name: Copy sshd config at host
+  template: src=sshd_config.j2 mode=0755 owner=root group=root dest=/etc/ssh/sshd/
+  become: yes
+
+- name: Start and enable sshd service
+  ansible.builtin.systemd:
+    name: sshd
+    enabled: yes
+    state: restarted
+    daemon_reload: yes
+  become: yes

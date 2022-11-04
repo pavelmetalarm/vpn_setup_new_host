@@ -1,0 +1,34 @@
+---
+- hosts: all
+  remote_user: root
+  #  become: yes
+  #  vars_files:
+  #    - vault_vars.yml
+  vars:
+    ansible_user: root
+    ansible_password: Kjuby73QpGhH0C4W7h46PqgjzxTw9wR8uF5x3akkE@@!@!#$
+
+
+  tasks:
+#  - name: install openvpn
+#    apt:
+#     name: openvpn
+#     state: present
+#
+#
+#  - name: install easyrsa
+#    apt:
+#     name: easy-rsa
+#     state: present
+
+
+
+
+
+  - name: create openvpn server
+    when: inventory_hostname in groups['vpn_servers']
+    ansible.builtin.include_role:
+      name: robertdebock.openvpn
+    vars:
+      openvpn_role: "server"
+

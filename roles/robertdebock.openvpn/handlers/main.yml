@@ -1,0 +1,21 @@
+---
+# handlers file for openvpn
+
+- name: restart openvpn
+  ansible.builtin.service:
+    name: "{{ openvpn_service }}"
+    state: restarted
+  when:
+    - not ansible_check_mode | bool
+
+- name: restart ufw
+  service: name=ufw state=restarted
+
+- name: stop ufw
+  service: name=ufw state=stopped
+
+- name: reload ufw rules
+  shell: ufw disable && ufw enable
+
+- name: disable ufw rules
+  shell: ufw disable

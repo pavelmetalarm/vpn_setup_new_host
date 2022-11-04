@@ -1,0 +1,28 @@
+#---
+#- hosts: all
+#  roles:
+#    - first-enterance
+
+
+---
+- hosts: all
+  vars_prompt:
+
+    - name: username
+      prompt: What is your username?
+      private: no
+
+    - name: password
+      prompt: What is your password?
+      #register: ansible_password
+
+#    - set_fact:
+#        ansible_password: "{{ password.user_input }}"
+  vars:
+    ansible_password: "{{ password }}"
+  tasks:
+
+    - name: Print a message
+      ansible.builtin.debug:
+        msg: 'Logging in as {{ username }}'
+

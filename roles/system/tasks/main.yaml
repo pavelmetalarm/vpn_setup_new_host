@@ -1,0 +1,230 @@
+---
+- name: Create temporary folder
+  file: path={{ ansible_tmp_folder }} state=directory recurse=yes
+  when: environment_mode == 'development' and ansible_connection != "docker"
+- name: Install epel at dedicated servers
+  yum: name=epel-release state=present
+  become: yes
+  when: ((ansible_kernel is search("amzn1")) and ansible_distribution == "Amazon") or ((ansible_distribution_major_version == "7") and ansible_distribution == "AlmaLinux")
+- name: Install epel repo for AlmaLinux 8
+  dnf: name=epel-release state=present
+#  dnf: name=https://mirror.yandex.ru/centos/8/extras/x86_64/os/Packages/epel-release-8-8.el8.noarch.rpm state=present
+  become: yes
+  when: ansible_distribution_major_version == '8'
+- name: Download epel package for Amazon Linux 2
+  get_url: url=https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+           dest={{ ansible_tmp_folder }}/epel-release-latest-7.noarch.rpm
+  when: (ansible_kernel is search("amzn2")) and ansible_distribution == "Amazon"
+- name: Install epel for Amazon Linux 2
+  yum: name={{ ansible_tmp_folder }}/epel-release-latest-7.noarch.rpm state=present
+  become: yes
+  when: (ansible_kernel is search("amzn2")) and ansible_distribution == "Amazon"
+- name: Install common packages for Docker
+  yum:
+    name:
+      - rsync
+    state: present
+    enablerepo: epel
+  become: yes
+  when: ansible_os_family == "RedHat" or ansible_os_family == "AlmaLinux" and ansible_connection == "docker"
+- name: Install common packages
+  yum:
+    name:  
+      - rsync
+      - openssl
+      - vim
+      - strace
+      - jq
+      - telnet
+      - net-tools
+      - nc
+      - tcpdump
+      - cpulimit
+      - bash-completion-extras
+      - bash-completion
+      - lsof
+      - git
+      - nload
+      - iftop
+      - htop
+    state: present
+    enablerepo: epel
+    update_cache: yes
+  become: yes
+  when: ansible_distribution == 'Amazon' or ansible_os_family == "RedHat" and ansible_connection != "docker" and ansible_distribution_major_version != '8'
+- name: Install common packages for Centos 8
+  yum:
+    name:
+      - rsync
+      - openssl
+      - vim
+      - strace
+      - jq
+      - telnet
+      - net-tools
+      - nc
+      - tcpdump
+      - bash-completion
+      - lsof
+      - git
+      - nload
+      - tar
+      - iftop
+      - htop
+    state: present
+    enablerepo: epel
+  become: yes
+  when: ansible_os_family == "RedHat" or ansible_os_family == "AlmaLinux" and ansible_connection != "docker" and ansible_distribution_major_version == '8'
+
+- name: Install logos package for Centos 8
+  yum:
+    name:
+      - centos-logos  
+    state: present
+    enablerepo: epel
+  become: yes
+  when: ansible_os_family == "RedHat" and ansible_connection != "docker" and ansible_distribution_major_version == '8'
+
+- name: Install logos package for AlmaLinux
+  yum:
+    name:
+      - almalinux-logos  
+    state: present
+    enablerepo: epel
+  become: yes
+  when: ansible_os_family == "AlmaLinux"
+
+- name: Install packages
+  yum:
+    name: 
+      - python27-pip
+      - MySQL-python27
+      - mysql57
+    state: present
+  become: yes
+  when: environment_mode == 'production' and (ansible_distribution == 'Amazon' and (ansible_kernel is search("amzn1"))) and ansible_connection != "docker"
+- name: Install packages
+  yum:
+    name: 
+      - python2-s3transfer
+      - python2-pip
+      - MySQL-python
+      - mariadb
+      - awscli
+      - python3-html2text
+    state: present
+  become: yes
+  when: (ansible_os_family == "RedHat" and ansible_distribution_major_version == "7") or (ansible_distribution == 'Amazon' and (ansible_kernel is search("amzn2"))) and ansible_connection != "docker"
+- name: Install wget
+  yum: name=wget state=present 
+  become: yes
+  when: ansible_os_family == "RedHat" or ansible_os_family == "AlmaLinux" and ansible_connection != "docker"
+- name: Install packages (debian/ubuntu)
+  apt:
+    name:
+       - rsync
+       - python-pip
+       - jq
+       - openssl
+       - vim
+       - tcpdump
+    state: present
+  become: yes
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu" and ansible_connection != "docker"
+- name: Install pip for AlmaLinux 8
+  dnf: name=python3-pip state=present
+  become: yes
+  when: ansible_distribution_major_version == '8' or ansible_os_family == "AlmaLinux"
+- name: Install boto3
+  pip: name=boto3 version=1.7.39
+  become: yes
+- name: Install botocore
+  pip: name=botocore version=1.12.45
+  become: yes
+- name: Install certifi
+  pip: name=certifi version=2021.10.8
+  become: yes
+- name: Install requests
+  pip: name=requests version=2.27.1
+  become: yes
+- name: Install PyMySQL
+  pip: name=PyMySQL
+  become: yes
+  when: environment_mode == 'development' and ansible_connection != "docker"
+- name: Install modules for cron jobs
+  pip:
+    name:
+      - py-zabbix
+      - scipy==1.1.0
+      - mysql-connector-python
+  become: yes
+  when: inventory_hostname == 'cron' and environment_mode == 'production' and (ansible_distribution == 'Amazon' or ansible_os_family == "AlmaLinux") and ansible_connection != "docker"
+- name: Install mitogen module for ansible
+  pip: name=mitogen
+  become: yes
+  when: ansible_connection != "docker"
+# - name: Install dnspython module for ansible
+#   pip: name=dnspython
+#   become: yes
+#   when: ansible_connection != "docker"
+# - name: Install redis python module
+#   pip: name=redis version=3.5.3
+#   become: yes
+#   when: ansible_connection != "docker"
+- name: Install futures python module
+  pip: name=futures
+  become: yes
+  when: ansible_connection != "docker"
+- name: Disable SELinux on AlmaLinux based
+  selinux:
+    state: disabled
+  become: yes
+  when: ansible_os_family == "AlmaLinux"
+  ignore_errors: yes
+- name: Disable SELinux on Rhel based
+  selinux:
+    state: disabled
+  become: yes
+  when: ansible_os_family == "RedHat" or ansible_os_family == "AlmaLinux"
+  ignore_errors: yes
+#Fixing a bug with 'unexpected keyword argument 'cursorclass' error after migration #47809 (https://github.com/ansible/ansible/pull/47809/files) 
+- name: Disable Firewalld
+  shell: "systemctl stop firewalld && systemctl disable firewalld"
+  become: yes
+  when: ansible_os_family == "AlmaLinux"
+  ignore_errors: yes
+- replace:
+    dest: /usr/lib/python2.7/site-packages/ansible/module_utils/mysql.py
+    regexp: 'cursorclass'
+    replace: 'cursor'
+  become: yes              
+  ignore_errors: yes
+  when: ansible_connection != "docker"
+- name: Disable net.ipv4.tcp_sack for security reason (https://www.opennet.ru/opennews/art.shtml?num=50889)
+  sysctl: name="net.ipv4.tcp_sack" value=0 sysctl_set=yes state=present
+  become: yes
+  ignore_errors: yes
+- name: Install common packages for centos docker
+  yum:
+    name:
+      - python36
+    state: present
+    enablerepo: epel
+  become: yes
+  when: ansible_os_family == "RedHat" and ansible_connection == "docker" and ansible_distribution_major_version == '7'
+- name: Install awscli for AlmaLinux 8
+  pip: name=awscli
+  become: yes
+  when: ansible_distribution_major_version == '8' or ansible_os_family == "AlmaLinux"
+- name: Install libcurl and libcurl-devel
+  yum:
+    name:
+      - libcurl
+      - libcurl-devel
+    state: present
+    enablerepo: city-fan.org
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == '7'
+  become: yes
+#- name: set as default locale
+#  command: localectl set-locale LANG=ru_RU.UTF-8 LC_ALL=ru_RU.UTF-8
+#  become: yes

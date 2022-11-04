@@ -1,0 +1,30 @@
+---
+- hosts: 35.208.192.20 
+  become: yes  
+
+  vars:
+      access_token: "JULUdUxovw4SWyJfvXQa"
+      registration_token: "7BfWn5ubCC_YN-TB1tRy"
+
+
+  tasks:
+#  - name: "Register runner"
+#    community.general.gitlab_runner:
+#      api_url: https://gitlab.com/
+##      api_token: "{{ access_token }}"
+#      registration_token: "{{ registration_token }}"
+#      description: GCP3
+#      state: present
+#      active: True
+#      tag_list: 
+#      run_untagged: True 
+#      locked: False 
+
+
+  - name: "Delete runner"
+    community.general.gitlab_runner:
+      api_url: https://gitlab.com/
+      registration_token: "{{ registration_token }}"
+      api_token: "{{ access_token }}"
+      description: GCP2 
+      state: absent

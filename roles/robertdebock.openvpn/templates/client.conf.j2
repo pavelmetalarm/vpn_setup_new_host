@@ -1,0 +1,23 @@
+{{ ansible_managed | comment }}
+
+client
+tls-client
+pull
+dev tun
+proto {{ openvpn_server_proto }}
+remote {{ openvpn_client_server }} {{ openvpn_server_port }} {{ openvpn_server_proto }}
+resolv-retry infinite
+nobind
+dhcp-option DNS 8.8.8.8
+user nobody
+group {{ openvpn_group }}
+persist-key
+persist-tun
+key-direction 1
+#deleted temporary  tls-auth /etc/openvpn/client/ta.key 1
+comp-lzo
+verb 3
+ca /etc/openvpn/client/ca.crt
+cert /etc/openvpn/client/client.crt
+key /etc/openvpn/client/client.key
+auth SHA512

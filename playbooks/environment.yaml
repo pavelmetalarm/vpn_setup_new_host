@@ -1,0 +1,90 @@
+
+#      #  - name: create openvpn server
+#      #    when: inventory_hostname in groups['vpn_servers']
+#      #    ansible.builtin.include_role:
+#      #      name: robertdebock.openvpn
+#      #    vars:
+#      #      openvpn_role: "server"
+
+---
+- hosts: all
+  vars_prompt:
+    - name: password_from_hoster
+      prompt: What is your password?
+  vars:
+    ansible_password: "{{ password_from_hoster }}"
+    control_user: admin
+  roles:
+
+
+
+#      - { role: первичная роль, ansible_password: ansible_facts.root_password}
+#      #- { role: ssh-keys, user_status: 'present', user_pub_key: 'home.pub', ssh_user: '{{ ansible_user }}'}
+      - { role: admin-user, ssh_user: '{{ control_user }}'}
+      - { role: ssh-keys, user_status: 'present', user_pub_key: 'home.pub', ssh_user: '{{ control_user }}'}
+      #  - ssh-environment
+
+
+
+
+
+      # install mlocate
+#
+#easyrsa=/usr/share/easy-rsa/easyrsa
+#pki_path=/root/easy-rsa/pki/
+#keys_storage_path=/root/client-configs/keys
+#make_config=/root/client-configs/make_config.sh
+#issued_certs=/root/easy-rsa/pki/issued/
+#ovpn_configs=/home/paul/ovpn_configs/
+#export EASYRSA_PKI=/root/easy-rsa/pki
+
+
+
+
+
+#  1   mkdir ~/easy-rsa (for root!)
+#
+#
+#   2  ln -s /usr/share/easy-rsa/* ~/easy-rsa/
+#
+#3  sudo chown sammy ~/easy-rsa (если не рут)
+#chmod 700 ~/easy-rsa ( если не рут)
+#
+#
+#4 cd ~/easy-rsa
+#      nano vars:
+#set_var EASYRSA_ALGO "ec"
+#set_var EASYRSA_DIGEST "sha512"
+#
+#
+#
+#5
+#
+#
+#
+#
+#
+#
+#
+#############################################
+#Generating a Client Certificate and Key Pair
+#
+#
+#1.1
+#mkdir -p ~/client-configs/keys
+#
+#chmod -R 700 ~/client-configs
+#
+#1.2
+#mkdir /home/paul/ovpn_configs/
+#
+#1.3
+#chmod 755 /root/client-configs/make_config.sh
+#
+#
+#
+#
+#
+#2.1
+#
+#/home/paul/make_openvpn_client_config.sh + chmod 755

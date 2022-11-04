@@ -1,0 +1,4 @@
+PermitRootLogin: no
+PubkeyAuthentication: yes
+Sshd_port: 22
+PasswordAuthentication : no
