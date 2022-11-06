@@ -7,16 +7,14 @@
 - name: Create a login user
   user:
      name: "{{ ssh_user }}"
-     #password: '???'
      groups:
       - sudo
       #- admin
       #- wheel
      state: present
-     shell: /bin/bash       # Defaults to /bin/bash
-     system: no             # Defaults to no
-     createhome: yes        # Defaults to yes
-     #home: /home/fideloper  # Defaults to /home/<username>
+     shell: /bin/bash
+     system: no
+     createhome: yes
 
 - name: Allow 'sudo' group to have passwordless sudo
   lineinfile:

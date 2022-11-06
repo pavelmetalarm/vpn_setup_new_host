@@ -5,8 +5,7 @@
   #  vars_files:
   #    - vault_vars.yml
   vars:
-    ansible_user: root
-    ansible_password: Kjuby73QpGhH0C4W7h46PqgjzxTw9wR8uF5x3akkE@@!@!#$
+    ansible_user: admin
 
 
   tasks:

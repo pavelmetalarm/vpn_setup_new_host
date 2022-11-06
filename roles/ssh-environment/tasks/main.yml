@@ -1,12 +1,54 @@
 ---
+
+- name: Prints TEST
+  ansible.builtin.debug:
+    msg:
+    - "test"
+
+
+
 - name: Copy sshd config at host
-  template: src=sshd_config.j2 mode=0755 owner=root group=root dest=/etc/ssh/sshd/
-  become: yes
+  template: src=sshd_config.j2 mode=0755 owner=root group=root dest=/etc/ssh/sshd_config
+#  become: yes
+
+#- name: Allow sshd to listen on tcp port 1488
+#  community.general.seport:
+#    ports: 1488
+#    proto: tcp
+#    setype: ssh_port_t
+#    state: present
+
+
+
+- name: enable UFW
+  ufw:
+    state: enabled
+
+
+- name: Allow TCP access to tcp port 1488 (hidden ssh)
+  ufw:
+    rule: allow
+    port: '1488'
+    proto: tcp
+
+#- name: Remove tcp port 22 local modification if exists
+#  community.general.seport:
+#  seport:
+#    ports: 22
+#    protocol: tcp
+#    setype: ssh_port_t
+#    state: absent
+#    local: true
+
+- name: Deny TCP access to tcp port 22 (default ssh)
+  ufw:
+    rule: deny
+    port: '22'
+    proto: tcp
 
 - name: Start and enable sshd service
   ansible.builtin.systemd:
     name: sshd
     enabled: yes
-    state: restarted
+    state: stopped
     daemon_reload: yes
-  become: yes

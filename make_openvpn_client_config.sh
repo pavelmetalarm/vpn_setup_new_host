@@ -2,10 +2,10 @@
 
 
 easyrsa=/usr/share/easy-rsa/easyrsa
-pki_path=/root/easy-rsa/pki/
-keys_storage_path=/root/client-configs/keys
-make_config=/root/client-configs/make_config.sh
-issued_certs=/root/easy-rsa/pki/issued/
+pki_path=/root/easy-rsa/pki/   #####
+keys_storage_path=/root/client-configs/keys #####
+make_config=/root/client-configs/make_config.sh ####
+issued_certs=/root/easy-rsa/pki/issued/ #####
 ovpn_configs=/home/paul/ovpn_configs/
 export EASYRSA_PKI=/root/easy-rsa/pki
 

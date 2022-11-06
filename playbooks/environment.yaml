@@ -7,19 +7,49 @@
 #      #      openvpn_role: "server"
 
 ---
-- hosts: all
+
+
+#
+#- hosts: vpn_server
+#  vars_prompt:
+#    - name: password_from_hoster
+#      prompt: What is hoster  password?
+#  vars:
+#    ansible_password: "{{ password_from_hoster }}" # КРАЕУГОЛЬНАЯ ПЕРЕМЕННАЯ ДЛЯ ВОЗМОЖНОСТИ КАТИТЬ НИЖЕЛЕЖАЩИЕ РОЛИ
+#    control_user: admin
+#  roles:
+#      - { role: admin-user, ssh_user: '{{ control_user }}'}
+#      - { role: ssh-keys, user_status: 'present', user_pub_key: 'home.pub', ssh_user: '{{ control_user }}'}
+#      - ssh-environment
+
+#- hosts: new
+#  vars:
+##    remote_port: 22
+#    ansible_port: 22
+#  roles:
+#      - ssh-environment
+
+
+
+- hosts: new
   vars_prompt:
     - name: password_from_hoster
-      prompt: What is your password?
+      prompt: What is hoster  password?
   vars:
-    ansible_password: "{{ password_from_hoster }}"
+    ansible_port: 1488
+    ansible_password: "{{ password_from_hoster }}" # КРАЕУГОЛЬНАЯ ПЕРЕМЕННАЯ ДЛЯ ВОЗМОЖНОСТИ КАТИТЬ НИЖЕЛЕЖАЩИЕ РОЛИ
     control_user: admin
   roles:
-#      - { role: первичная роль, ansible_password: ansible_facts.root_password}
-#      #- { role: ssh-keys, user_status: 'present', user_pub_key: 'home.pub', ssh_user: '{{ ansible_user }}'}
       - { role: admin-user, ssh_user: '{{ control_user }}'}
       - { role: ssh-keys, user_status: 'present', user_pub_key: 'home.pub', ssh_user: '{{ control_user }}'}
-      #  - ssh-environment
+      - ssh-environment
+
+
+
+
+
+
+
 
 
 
